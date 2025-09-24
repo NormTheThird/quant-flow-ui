@@ -78,8 +78,10 @@ jobs:
     
     steps:
     - name: Setup Kubernetes Config
+      env:
+        KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG }}
       run: |
-        echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > kubeconfig
+        echo "$KUBE_CONFIG_DATA" | base64 -d > kubeconfig
         export KUBECONFIG=kubeconfig
         kubectl cluster-info
     
