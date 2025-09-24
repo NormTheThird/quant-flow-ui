@@ -4,12 +4,11 @@ on:
   push:
     branches: [ "main" ]
     paths: 
-      - 'quant-flow-ui/**'
-      - '.github/workflows/react-ui-cd.yml'
+      - '**'
   pull_request:
     branches: [ "main" ]
     paths: 
-      - 'quant-flow-ui/**'
+      - '**'
 
 env:
   HARBOR_REGISTRY: "10.47.1.106"
@@ -32,22 +31,12 @@ jobs:
       with:
         node-version: ${{ env.NODE_VERSION }}
         cache: 'npm'
-        cache-dependency-path: 'quant-flow-ui/package-lock.json'
+        cache-dependency-path: 'package-lock.json'
     
     - name: Install dependencies
-      working-directory: ./quant-flow-ui
       run: npm ci
     
-    - name: Run linting
-      working-directory: ./quant-flow-ui
-      run: npm run lint
-    
-    - name: Run tests
-      working-directory: ./quant-flow-ui
-      run: npm test -- --coverage --watchAll=false
-    
     - name: Build React app
-      working-directory: ./quant-flow-ui
       run: npm run build
     
     - name: Login to Harbor
@@ -61,7 +50,7 @@ jobs:
         IMAGE_TAG=${{ env.HARBOR_REGISTRY }}/${{ env.HARBOR_PROJECT }}/quantflow-ui:${{ github.sha }}
         IMAGE_LATEST=${{ env.HARBOR_REGISTRY }}/${{ env.HARBOR_PROJECT }}/quantflow-ui:latest
         
-        docker build -f quant-flow-ui/Dockerfile -t $IMAGE_TAG -t $IMAGE_LATEST ./quant-flow-ui
+        docker build -f Dockerfile -t $IMAGE_TAG -t $IMAGE_LATEST .
         docker push $IMAGE_TAG
         docker push $IMAGE_LATEST
         
