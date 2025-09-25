@@ -207,6 +207,10 @@ jobs:
     runs-on: self-hosted
     if: false  # This disables the job
 
+    steps:
+    - name: Skip production deployment
+      run: echo "Production deployment is disabled in this workflow."
+
   # CLEANUP
   cleanup:
     needs: [build-react-ui, security-scan, deploy-test, deploy-production]
