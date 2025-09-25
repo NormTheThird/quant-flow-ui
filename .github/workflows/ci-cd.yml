@@ -198,7 +198,7 @@ jobs:
     - name: Run Health Check
       run: |
         sleep 30
-        curl -f https://ui-test.quantflow.local || exit 1
+        curl -k -f -H "Host: ui-test.quantflow.local" https://10.47.1.109:31651 || exit 1
         echo "✅ React UI deployment successful and healthy!"
 
   # PRODUCTION DEPLOYMENT - Manual approval required
