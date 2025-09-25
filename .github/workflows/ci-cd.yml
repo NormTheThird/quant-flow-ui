@@ -82,7 +82,7 @@ jobs:
         echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > kubeconfig
         export KUBECONFIG=kubeconfig
         kubectl cluster-info
-          
+    
     - name: Create Harbor Registry Secret
       run: |
         export KUBECONFIG=kubeconfig
@@ -107,7 +107,7 @@ jobs:
             app: quantflow-ui
             environment: test
         spec:
-          replicas: 2
+          replicas: 1
           selector:
             matchLabels:
               app: quantflow-ui
@@ -175,6 +175,7 @@ jobs:
             nginx.ingress.kubernetes.io/proxy-body-size: "10m"
             cert-manager.io/cluster-issuer: letsencrypt-prod
         spec:
+          ingressClassName: nginx
           tls:
           - hosts:
             - ui-test.quantflow.local
@@ -311,6 +312,7 @@ jobs:
             nginx.ingress.kubernetes.io/proxy-body-size: "10m"
             cert-manager.io/cluster-issuer: letsencrypt-prod
         spec:
+          ingressClassName: nginx
           tls:
           - hosts:
             - quantflow.local
