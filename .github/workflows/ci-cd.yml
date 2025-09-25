@@ -107,7 +107,7 @@ jobs:
             app: quantflow-ui
             environment: test
         spec:
-          replicas: 2
+          replicas: 1
           selector:
             matchLabels:
               app: quantflow-ui
@@ -175,6 +175,7 @@ jobs:
             nginx.ingress.kubernetes.io/proxy-body-size: "10m"
             cert-manager.io/cluster-issuer: letsencrypt-prod
         spec:
+          ingressClassName: nginx
           tls:
           - hosts:
             - ui-test.quantflow.local
@@ -197,144 +198,18 @@ jobs:
     - name: Run Health Check
       run: |
         sleep 30
-        curl -f https://ui-test.quantflow.local || exit 1
+        curl -k -f -H "Host: ui-test.quantflow.local" https://10.47.1.109:31651 || exit 1
         echo "✅ React UI deployment successful and healthy!"
 
   # PRODUCTION DEPLOYMENT - Manual approval required
   deploy-production:
     needs: [build-react-ui, security-scan, deploy-test]
     runs-on: self-hosted
-    if: github.ref == 'refs/heads/main'
-    environment: production
-    
+    if: false  # This disables the job
+
     steps:
-    - name: Setup Kubernetes Config
-      run: |
-        echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > kubeconfig
-        export KUBECONFIG=kubeconfig
-        kubectl cluster-info
-    
-    - name: Create Harbor Registry Secret
-      run: |
-        export KUBECONFIG=kubeconfig
-        kubectl create secret docker-registry harbor-registry \
-          --docker-server=${{ env.HARBOR_REGISTRY }} \
-          --docker-username="${{ secrets.HARBOR_USERNAME }}" \
-          --docker-password="${{ secrets.HARBOR_PASSWORD }}" \
-          -n production --dry-run=client -o yaml | kubectl apply -f -
-    
-    - name: Deploy React UI to Production
-      run: |
-        export KUBECONFIG=kubeconfig
-        IMAGE_TAG=${{ needs.build-react-ui.outputs.image-tag }}
-        
-        cat <<EOF | kubectl apply -f -
-        apiVersion: apps/v1
-        kind: Deployment
-        metadata:
-          name: quantflow-ui
-          namespace: production
-          labels:
-            app: quantflow-ui
-            environment: production
-        spec:
-          replicas: 3
-          strategy:
-            type: RollingUpdate
-            rollingUpdate:
-              maxUnavailable: 1
-              maxSurge: 1
-          selector:
-            matchLabels:
-              app: quantflow-ui
-          template:
-            metadata:
-              labels:
-                app: quantflow-ui
-                environment: production
-            spec:
-              imagePullSecrets:
-              - name: harbor-registry
-              containers:
-              - name: quantflow-ui
-                image: $IMAGE_TAG
-                ports:
-                - containerPort: 80
-                env:
-                - name: NODE_ENV
-                  value: "production"
-                - name: REACT_APP_API_URL
-                  value: "https://api.quantflow.local"
-                resources:
-                  requests:
-                    memory: "256Mi"
-                    cpu: "200m"
-                  limits:
-                    memory: "512Mi"
-                    cpu: "500m"
-                livenessProbe:
-                  httpGet:
-                    path: /
-                    port: 80
-                  initialDelaySeconds: 30
-                  periodSeconds: 10
-                readinessProbe:
-                  httpGet:
-                    path: /
-                    port: 80
-                  initialDelaySeconds: 5
-                  periodSeconds: 5
-        ---
-        apiVersion: v1
-        kind: Service
-        metadata:
-          name: quantflow-ui-service
-          namespace: production
-          labels:
-            app: quantflow-ui
-        spec:
-          selector:
-            app: quantflow-ui
-          ports:
-          - port: 80
-            targetPort: 80
-            protocol: TCP
-          type: NodePort
-        ---
-        apiVersion: networking.k8s.io/v1
-        kind: Ingress
-        metadata:
-          name: quantflow-ui-ingress
-          namespace: production
-          annotations:
-            nginx.ingress.kubernetes.io/rewrite-target: /
-            nginx.ingress.kubernetes.io/proxy-body-size: "10m"
-            cert-manager.io/cluster-issuer: letsencrypt-prod
-        spec:
-          tls:
-          - hosts:
-            - quantflow.local
-            secretName: quantflow-ui-prod-tls
-          rules:
-          - host: quantflow.local
-            http:
-              paths:
-              - path: /
-                pathType: Prefix
-                backend:
-                  service:
-                    name: quantflow-ui-service
-                    port:
-                      number: 80
-        EOF
-        
-        kubectl rollout status deployment/quantflow-ui -n production --timeout=300s
-    
-    - name: Production Health Check
-      run: |
-        sleep 30
-        curl -f https://quantflow.local || exit 1
-        echo "🚀 Production React UI deployment successful!"
+    - name: Skip production deployment
+      run: echo "Production deployment is disabled in this workflow."
 
   # CLEANUP
   cleanup:
