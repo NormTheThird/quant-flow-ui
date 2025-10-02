@@ -1,5 +1,4 @@
-// Base API configuration and common functionality
-const API_BASE_URL = "https://localhost:7270";
+const API_BASE_URL = window.location.hostname === "localhost" ? "https://localhost:7270" : "http://10.47.1.110:32339";
 
 export class BaseApiService {
   constructor() {
