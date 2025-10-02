@@ -1,11 +1,13 @@
-import { useState, useEffect } from 'react';
-import { ColorModeContext, useMode } from './theme';
-import { CssBaseline, ThemeProvider } from '@mui/material'
-import { Routes, Route } from 'react-router-dom';
-import Topbar from './scenes/global/Topbar';
-import Sidebar from './scenes/global/Sidebar';
-import Dashboard from './scenes/dashboard';
-import Login from './scenes/login';
+import { useState, useEffect } from "react";
+import { ColorModeContext, useMode } from "./theme";
+import { CssBaseline, ThemeProvider } from "@mui/material";
+import { Routes, Route } from "react-router-dom";
+import Topbar from "./scenes/global/Topbar";
+import Sidebar from "./scenes/global/Sidebar";
+import Dashboard from "./scenes/dashboard";
+import Login from "./scenes/login";
+import MarketDataConfiguration from "./scenes/admin/marketDataConfiguration";
+import SymbolManagement from "./scenes/admin/symbolManagement";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -14,9 +16,9 @@ function App() {
 
   // Check if user is already logged in
   useEffect(() => {
-    const token = localStorage.getItem('authToken');
-    const user = localStorage.getItem('authUser');
-    
+    const token = localStorage.getItem("authToken");
+    const user = localStorage.getItem("authUser");
+
     if (token && user) {
       setIsAuthenticated(true);
     }
@@ -29,13 +31,14 @@ function App() {
       <ColorModeContext.Provider value={colorMode}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          <div style={{ 
-            display: 'flex', 
-            justifyContent: 'center', 
-            alignItems: 'center', 
-            height: '100vh',
-            color: theme.palette.text.primary
-          }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100vh",
+              color: theme.palette.text.primary,
+            }}>
             Loading...
           </div>
         </ThemeProvider>
@@ -66,6 +69,8 @@ function App() {
             <Topbar />
             <Routes>
               <Route path="/" element={<Dashboard />} />
+              <Route path="/admin/market-data-config" element={<MarketDataConfiguration />} />
+              <Route path="/admin/symbol-management" element={<SymbolManagement />} />
             </Routes>
           </main>
         </div>

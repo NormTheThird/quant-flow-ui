@@ -5,18 +5,16 @@ import { Link } from "react-router-dom";
 import { tokens } from "../../theme";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
+import StorageOutlinedIcon from "@mui/icons-material/StorageOutlined";
+import ShowChartOutlinedIcon from "@mui/icons-material/ShowChartOutlined";
 
 // Item component for menu items
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  
+
   return (
-    <MenuItem active={selected === title} 
-              style={{color: colors.grey[100]}} 
-              onClick={() => setSelected(title)} 
-              icon={icon} 
-              component={<Link to={to} />}>
+    <MenuItem active={selected === title} style={{ color: colors.grey[100] }} onClick={() => setSelected(title)} icon={icon} component={<Link to={to} />}>
       <Typography>{title}</Typography>
     </MenuItem>
   );
@@ -29,26 +27,33 @@ const CustomSidebar = () => {
   const [selected, setSelected] = useState("Dashboard");
 
   return (
-    <Box sx={{ height: "100vh",
-               "& .ps-sidebar-container": { background: `${colors.primary[400]} !important`, height: "100vh !important", border: "none !important", boxShadow: "none !important" },
-               "& .ps-sidebar-root": { border: "none !important", borderRight: "none !important" },
-               "& .ps-menu-icon": { backgroundColor: "transparent !important" },
-               "& .ps-menu-button": { padding: "5px 35px 5px 20px !important" },
-               "& .ps-menu-button:hover": { color: "#868dfb !important", backgroundColor: "transparent !important" },
-               "& .ps-menu-button.ps-active": { color: "#6870fa !important" }}}>
+    <Box
+      sx={{
+        height: "100vh",
+        "& .ps-sidebar-container": {
+          background: `${colors.primary[400]} !important`,
+          height: "100vh !important",
+          border: "none !important",
+          boxShadow: "none !important",
+        },
+        "& .ps-sidebar-root": { border: "none !important", borderRight: "none !important" },
+        "& .ps-menu-icon": { backgroundColor: "transparent !important" },
+        "& .ps-menu-button": { padding: "5px 35px 5px 20px !important" },
+        "& .ps-menu-button:hover": { color: "#868dfb !important", backgroundColor: "transparent !important" },
+        "& .ps-menu-button.ps-active": { color: "#6870fa !important" },
+      }}>
       <Sidebar collapsed={isCollapsed} style={{ height: "100vh" }}>
         <Menu>
-
           {/* LOGO AND MENU ICON */}
-          <MenuItem onClick={() => setIsCollapsed(!isCollapsed)} 
-                    icon={isCollapsed ? <MenuOutlinedIcon /> : undefined}
-                    style={{ margin: "10px 0 20px 0",  color: colors.grey[100]}}>
+          <MenuItem
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            icon={isCollapsed ? <MenuOutlinedIcon /> : undefined}
+            style={{ margin: "10px 0 20px 0", color: colors.grey[100] }}>
             {!isCollapsed && (
-              <Box display="flex"
-                   justifyContent="space-between"
-                   alignItems="center"
-                   ml="15px">
-                <Typography variant="h3" color={colors.grey[100]}>Quant Flow</Typography>
+              <Box display="flex" justifyContent="space-between" alignItems="center" ml="15px">
+                <Typography variant="h3" color={colors.grey[100]}>
+                  Quant Flow
+                </Typography>
                 <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
                   <MenuOutlinedIcon />
                 </IconButton>
@@ -80,14 +85,14 @@ const CustomSidebar = () => {
           )} */}
 
           <Box paddingLeft={isCollapsed ? undefined : "10%"}>
-            <Item
-              title="Dashboard"
-              to="/"
-              icon={<HomeOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
+            <Item title="Dashboard" to="/" icon={<HomeOutlinedIcon />} selected={selected} setSelected={setSelected} />
 
+            {/* ADMIN SECTION */}
+            <Typography variant="h6" color={colors.grey[300]} sx={{ m: "15px 0 5px 20px" }}>
+              Admin
+            </Typography>
+            <Item title="Symbols" to="/admin/symbol-management" icon={<ShowChartOutlinedIcon />} selected={selected} setSelected={setSelected} />
+            <Item title="Market Data" to="/admin/market-data-config" icon={<StorageOutlinedIcon />} selected={selected} setSelected={setSelected} />
           </Box>
         </Menu>
       </Sidebar>

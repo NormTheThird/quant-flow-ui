@@ -1,9 +1,12 @@
 import { useState } from "react";
-import { Box, TextField, Button, Typography, Alert, Paper, InputAdornment, IconButton, CircularProgress, Link } from "@mui/material";
+import { Box, TextField, Button, Typography, Alert, Paper, InputAdornment, IconButton, CircularProgress, Link, useTheme } from "@mui/material";
 import { Visibility, VisibilityOff, Email, Lock } from "@mui/icons-material";
+import { tokens } from "../../theme";
 import { authenticationApi } from "../../services/api";
 
 const Login = () => {
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
   const [mode, setMode] = useState("login");
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
@@ -17,7 +20,6 @@ const Login = () => {
       ...prev,
       [name]: value,
     }));
-    // Clear messages when user starts typing
     if (error) setError("");
     if (success) setSuccess("");
   };
@@ -39,10 +41,7 @@ const Login = () => {
         password: formData.password,
       });
 
-      // Store auth data using the service method
       authenticationApi.storeAuthData(result);
-
-      // Redirect to dashboard
       window.location.reload();
     } catch (error) {
       setError(error.message || "Login failed. Please try again.");
@@ -88,44 +87,40 @@ const Login = () => {
     <Box
       sx={{
         minHeight: "100vh",
-        background: "#141b2d",
+        background: colors.primary[500],
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         padding: "20px",
-      }}
-    >
+      }}>
       <Paper
         elevation={3}
         sx={{
           padding: "40px",
           borderRadius: "10px",
-          backgroundColor: "#1f2a40",
+          backgroundColor: colors.primary[400],
           minWidth: "400px",
           maxWidth: "500px",
           width: "100%",
-          border: "1px solid #3d3d3d",
-        }}
-      >
+          border: `1px solid ${colors.grey[700]}`,
+        }}>
         <Box sx={{ textAlign: "center", marginBottom: "30px" }}>
           <Typography
             variant="h2"
             sx={{
-              color: "#e0e0e0",
+              color: colors.grey[100],
               fontWeight: "bold",
               marginBottom: "10px",
               fontSize: "2.5rem",
-            }}
-          >
-            QuantFlow
+            }}>
+            Quant Flow
           </Typography>
           <Typography
             variant="h5"
             sx={{
-              color: "#c2c2c2",
+              color: colors.grey[200],
               fontWeight: "normal",
-            }}
-          >
+            }}>
             {mode === "login" ? "Trading Platform" : "Reset Password"}
           </Typography>
         </Box>
@@ -140,8 +135,7 @@ const Login = () => {
               "& .MuiAlert-icon": {
                 color: "#db4f4a",
               },
-            }}
-          >
+            }}>
             {error}
           </Alert>
         )}
@@ -151,13 +145,15 @@ const Login = () => {
             severity="success"
             sx={{
               marginBottom: "20px",
-              backgroundColor: "#0f2922",
-              color: "#e0e0e0",
+              backgroundColor: colors.greenAccent[700],
+              color: colors.grey[100],
               "& .MuiAlert-icon": {
-                color: "#4cceac",
+                color: colors.greenAccent[400],
               },
-            }}
-          >
+              "& .MuiAlert-message": {
+                color: colors.grey[100],
+              },
+            }}>
             {success}
           </Alert>
         )}
@@ -173,27 +169,64 @@ const Login = () => {
               value={formData.email}
               onChange={handleInputChange}
               disabled={loading}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Email sx={{ color: "#e0e0e0" }} />
-                  </InputAdornment>
-                ),
-                sx: {
-                  color: "#e0e0e0",
-                  "& .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "#666666",
-                  },
-                  "&:hover .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "#858585",
-                  },
-                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "#4cceac",
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Email sx={{ color: colors.grey[100] }} />
+                    </InputAdornment>
+                  ),
+                  sx: {
+                    color: colors.grey[100],
+                    backgroundColor: colors.primary[400],
+                    "& input": {
+                      color: `${colors.grey[100]} !important`,
+                      backgroundColor: `${colors.primary[400]} !important`,
+                      "&:-webkit-autofill": {
+                        WebkitBoxShadow: `0 0 0 1000px ${colors.primary[400]} inset !important`,
+                        WebkitTextFillColor: `${colors.grey[100]} !important`,
+                        caretColor: colors.grey[100],
+                        backgroundColor: `${colors.primary[400]} !important`,
+                        transition: "background-color 5000s ease-in-out 0s !important",
+                      },
+                      "&:-webkit-autofill:hover": {
+                        WebkitBoxShadow: `0 0 0 1000px ${colors.primary[400]} inset !important`,
+                        WebkitTextFillColor: `${colors.grey[100]} !important`,
+                        backgroundColor: `${colors.primary[400]} !important`,
+                      },
+                      "&:-webkit-autofill:focus": {
+                        WebkitBoxShadow: `0 0 0 1000px ${colors.primary[400]} inset !important`,
+                        WebkitTextFillColor: `${colors.grey[100]} !important`,
+                        backgroundColor: `${colors.primary[400]} !important`,
+                      },
+                      "&:-webkit-autofill:active": {
+                        WebkitBoxShadow: `0 0 0 1000px ${colors.primary[400]} inset !important`,
+                        WebkitTextFillColor: `${colors.grey[100]} !important`,
+                        backgroundColor: `${colors.primary[400]} !important`,
+                      },
+                    },
+                    "&:-webkit-autofill": {
+                      backgroundColor: `${colors.primary[400]} !important`,
+                    },
+                    "& .MuiOutlinedInput-notchedOutline": {
+                      borderColor: colors.grey[600],
+                    },
+                    "&:hover .MuiOutlinedInput-notchedOutline": {
+                      borderColor: colors.grey[400],
+                    },
+                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                      borderColor: colors.greenAccent[500],
+                    },
                   },
                 },
-              }}
-              InputLabelProps={{
-                sx: { color: "#a3a3a3" },
+                inputLabel: {
+                  sx: {
+                    color: colors.grey[300],
+                    "&.Mui-focused": {
+                      color: colors.grey[300],
+                    },
+                  },
+                },
               }}
             />
           </Box>
@@ -209,34 +242,71 @@ const Login = () => {
                 value={formData.password}
                 onChange={handleInputChange}
                 disabled={loading}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Lock sx={{ color: "#e0e0e0" }} />
-                    </InputAdornment>
-                  ),
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton onClick={handleTogglePassword} edge="end" disabled={loading} sx={{ color: "#e0e0e0" }}>
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                  sx: {
-                    color: "#e0e0e0",
-                    "& .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "#666666",
-                    },
-                    "&:hover .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "#858585",
-                    },
-                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "#4cceac",
+                slotProps={{
+                  input: {
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Lock sx={{ color: colors.grey[100] }} />
+                      </InputAdornment>
+                    ),
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton onClick={handleTogglePassword} edge="end" disabled={loading} sx={{ color: colors.grey[100] }}>
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                    sx: {
+                      color: colors.grey[100],
+                      backgroundColor: colors.primary[400],
+                      "& input": {
+                        color: `${colors.grey[100]} !important`,
+                        backgroundColor: `${colors.primary[400]} !important`,
+                        "&:-webkit-autofill": {
+                          WebkitBoxShadow: `0 0 0 1000px ${colors.primary[400]} inset !important`,
+                          WebkitTextFillColor: `${colors.grey[100]} !important`,
+                          caretColor: colors.grey[100],
+                          backgroundColor: `${colors.primary[400]} !important`,
+                          transition: "background-color 5000s ease-in-out 0s !important",
+                        },
+                        "&:-webkit-autofill:hover": {
+                          WebkitBoxShadow: `0 0 0 1000px ${colors.primary[400]} inset !important`,
+                          WebkitTextFillColor: `${colors.grey[100]} !important`,
+                          backgroundColor: `${colors.primary[400]} !important`,
+                        },
+                        "&:-webkit-autofill:focus": {
+                          WebkitBoxShadow: `0 0 0 1000px ${colors.primary[400]} inset !important`,
+                          WebkitTextFillColor: `${colors.grey[100]} !important`,
+                          backgroundColor: `${colors.primary[400]} !important`,
+                        },
+                        "&:-webkit-autofill:active": {
+                          WebkitBoxShadow: `0 0 0 1000px ${colors.primary[400]} inset !important`,
+                          WebkitTextFillColor: `${colors.grey[100]} !important`,
+                          backgroundColor: `${colors.primary[400]} !important`,
+                        },
+                      },
+                      "&:-webkit-autofill": {
+                        backgroundColor: `${colors.primary[400]} !important`,
+                      },
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        borderColor: colors.grey[600],
+                      },
+                      "&:hover .MuiOutlinedInput-notchedOutline": {
+                        borderColor: colors.grey[400],
+                      },
+                      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                        borderColor: colors.greenAccent[500],
+                      },
                     },
                   },
-                }}
-                InputLabelProps={{
-                  sx: { color: "#a3a3a3" },
+                  inputLabel: {
+                    sx: {
+                      color: colors.grey[300],
+                      "&.Mui-focused": {
+                        color: colors.grey[300],
+                      },
+                    },
+                  },
                 }}
               />
             </Box>
@@ -250,19 +320,19 @@ const Login = () => {
             sx={{
               padding: "12px",
               fontSize: "16px",
-              backgroundColor: "#4cceac",
-              color: "#e0e0e0",
+              backgroundColor: colors.greenAccent[500],
+              color: "#000000",
+              fontWeight: "bold",
               "&:hover": {
-                backgroundColor: "#3da58a",
+                backgroundColor: colors.greenAccent[600],
               },
               "&:disabled": {
-                backgroundColor: "#666666",
+                backgroundColor: colors.grey[600],
               },
-            }}
-          >
+            }}>
             {loading ? (
               <Box sx={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                <CircularProgress size={20} sx={{ color: "#e0e0e0" }} />
+                <CircularProgress size={20} sx={{ color: colors.grey[100] }} />
                 {mode === "login" ? "Signing In..." : "Sending Instructions..."}
               </Box>
             ) : mode === "login" ? (
@@ -273,7 +343,6 @@ const Login = () => {
           </Button>
         </form>
 
-        {/* Toggle between login and forgot password */}
         <Box sx={{ textAlign: "center", marginTop: "20px" }}>
           {mode === "login" ? (
             <Link
@@ -281,13 +350,12 @@ const Login = () => {
               type="button"
               onClick={() => switchMode("forgot")}
               sx={{
-                color: "#4cceac",
+                color: colors.greenAccent[500],
                 textDecoration: "none",
                 "&:hover": {
                   textDecoration: "underline",
                 },
-              }}
-            >
+              }}>
               Forgot your password?
             </Link>
           ) : (
@@ -296,13 +364,12 @@ const Login = () => {
               type="button"
               onClick={() => switchMode("login")}
               sx={{
-                color: "#4cceac",
+                color: colors.greenAccent[500],
                 textDecoration: "none",
                 "&:hover": {
                   textDecoration: "underline",
                 },
-              }}
-            >
+              }}>
               Back to Sign In
             </Link>
           )}
@@ -312,9 +379,8 @@ const Login = () => {
           <Typography
             variant="body2"
             sx={{
-              color: "#a3a3a3",
-            }}
-          >
+              color: colors.grey[300],
+            }}>
             Automated Cryptocurrency Trading Platform
           </Typography>
         </Box>
